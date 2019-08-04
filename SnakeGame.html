@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+<center>
+
+<canvas id="canvas" width="480" height="480"> </canvas>
+</center>
+</body>
+<script>
+var canvas=document.getElementById("canvas");
+var ctx=canvas.getContext('2d');
+const img = new Image();
+img.src="bg.png";
+var box=32;
+var snake=[];
+snake[0]={
+	x:5*box,
+	y:4*box
+}
+var food={
+	
+	x:parseInt((Math.random()*10+2))*box,
+	y:parseInt((Math.random()*10+2))*box
+}
+
+let d;
+var score=0;
+
+document.addEventListener("keydown",direction);
+
+function direction(event){
+    let key = event.keyCode;
+    if( key == 37 && d != "RIGHT"){
+        
+        d = "LEFT";
+    }else if(key == 38 && d != "DOWN"){
+        d = "UP";
+
+    }else if(key == 39 && d != "LEFT"){
+        d = "RIGHT";
+       
+    }else if(key == 40 && d != "UP"){
+        d = "DOWN";
+       
+    }
+}
+
+function collision(a)
+{
+for(var i=1;i<snake.length;i++)
+{
+	if(a.x==snake[i].x&&a.y==snake[i].y)
+		return true;
+	
+}
+	
+	
+}
+
+function draw()
+{
+	
+ctx.clearRect(0,0,480,480);
+
+ctx.drawImage(img, 0, 0,480,480);  
+
+
+for(var i=0;i<snake.length;i++)
+{
+      ctx.fillStyle =  "grey"; 
+        ctx.fillRect(snake[i].x,snake[i].y,box,box);
+        
+        ctx.strokeStyle = "red";
+        ctx.strokeRect(snake[i].x,snake[i].y,box,box);
+ 
+}
+	ctx.beginPath();
+	ctx.rect(food.x,food.y,box,box);
+	ctx.fillStyle="white";
+	ctx.fill();
+	ctx.closePath();
+	ctx.font="20px Times New Roman";
+	ctx.fillStyle="white";
+	ctx.fillText("Score:"+score,30,30);
+	var sx=snake[0].x;
+	var sy=snake[0].y;
+	
+	
+	if(d=="RIGHT")
+	sx=sx+box;
+	else if(d=="LEFT")
+	sx=sx-box;
+	else if(d=="UP")
+	sy=sy-box;
+	else if(d=="DOWN")
+	sy=sy+box;
+	
+	var temp={
+	
+	x:sx,
+	y:sy
+	}
+	if(snake[0].x<-box||snake[0].x>15*box||snake[0].y<-box||snake[0].y>15*box||collision(temp))
+	{
+	alert("Game Over");
+	document.location.reload();
+	
+	}
+	snake.pop();
+	snake.unshift(temp);
+	if(snake[0].x==food.x&&snake[0].y==food.y)
+	{
+		score++;
+	var temp={
+	
+	x:food.x,
+	y:food.y
+	}
+	
+	
+	snake.unshift(temp);
+	food.x=parseInt((Math.random()*10+2))*box;
+	food.y=parseInt((Math.random()*10+2))*box;
+	
+	}
+	
+	
+	
+		
+	}
+
+
+
+img.onload=function()
+{
+ctx.drawImage(img, 0, 0,480,480);  
+draw();
+}
+setInterval(draw,250);
+
+
+</script>
+
+</html>
